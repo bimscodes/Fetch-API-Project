@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.0-alpha1/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" />
+    <title>Fetch API SandBox</title>
+</head>
+
+<body>
+    <div class="container mt-3">
+        <h3 class="display-4 mb-5">Fetch API Sandbox</h3>
+
+        <div class="container"></div>
+
+        <div class="d-flex">
+            <button class="btn btn-primary mr-4" id="getText">Get Text</button>
+            <button class="btn btn-warning mr-4" id="getJson">Get JSON</button>
+            <button class="btn btn-success mr-4" id="ApiData">Get API Data</button>
+        </div>
+        <hr />
+        <div id="output"></div>
+
+        <h5 class="mt-4">Update API with POST Method</h5>
+        <form id="appForm">
+            <div class="form-group">
+                <input class="form-control" type="text" id="title" /><br />
+            </div>
+
+            <div class="form-group">
+                <textarea class="form-control" type="text" id="body"></textarea>
+            </div>
+
+            <input type="submit" class="btn btn-secondary mt-2" value="submit" />
+        </form>
+    </div>
+    <script>
+        document.getElementById("getText").addEventListener("click", getText);
+        document.getElementById("getJson").addEventListener("click", getUser);
+        document.getElementById("ApiData").addEventListener("click", getApiData);
+        document.getElementById("appForm").addEventListener("submit", methodPost);
+
+        function getText() {
+            //call with arrow function
+
+            fetch("simple.txt")
+                .then((res) => res.text())
+                .then((data) => {
+                    document.getElementById("output").innerHTML = data;
+                });
+        }
+
+        function getUser() {
+            fetch("getJson.json")
+                .then((res) => res.json())
+                .then((data) => {
+                    let output = '<h2 class="mb-4">Users</h2>';
+                    data.forEach(function(user) {
+                        output += `
+                <ul class="list-group mb-3">
+                 <li class="list-group-item">ID : ${user.id}</li>
+                 <li class="list-group-item">Name: ${user.name}</li>
+                 <li class="list-group-item">Email : ${user.email}</li>
+                </ul>
+                `;
+                    });
+                    document.getElementById("output").innerHTML = output;
+                });
+        }
+
+        function getApiData() {
+            fetch("https://jsonplaceholder.typicode.com/posts").then((res) =>
+                res.json().then((data) => {
+                    let output = '<h2 class="mb-4">Post</h2>';
+                    data.forEach(function(apidata) {
+                        output += `
+                  <div class="card p-3 mb-4">
+
+                    <h2>${apidata.title}</h2>
+                     <p>${apidata.body}</p>
+                    </div>
+                  `;
+                    });
+                    document.getElementById("output").innerHTML = output;
+                })
+            );
+        }
+
+        function methodPost(e) {
+            e.preventDefault();
+
+            let title = document.getElementById("title").value;
+            let body = document.getElementById("body").value;
+
+            fetch("https://jsonplaceholder.typicode.com/posts", {
+                    method: "POST",
+                    headers: {
+                        Accept: "application/json,text/plain,*/*",
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        title: title,
+                        body: body,
+                    }),
+                })
+                .then((res) => res.json())
+                .then((data) => console.log(data));
+        }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.0-alpha1/js/bootstrap.min.js"></script>
+</body>
+
+</html>
